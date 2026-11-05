@@ -1,0 +1,163 @@
+# EXPERIMENT 4 – KUBERNETES
+
+## Aim
+
+To deploy a web application using Kubernetes, expose it through a Service, and demonstrate load balancing.
+
+## 1. Deployment YAML File
+
+Create a file named `deployment.yaml`.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: web-app-deployment
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: web-app
+
+  template:
+    metadata:
+      labels:
+        app: web-app
+
+    spec:
+      containers:
+      - name: web-app
+        image: abrar0123786/mywebapp:v1
+        ports:
+        - containerPort: 80
+```
+
+## 2. Service YAML File
+
+Create a file named `service.yaml`.
+
+```yaml
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: web-app-service
+
+spec:
+  type: NodePort
+
+  selector:
+    app: web-app
+
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30080
+```
+
+## 3. Execution – Five Major Commands
+
+### Command 1: Apply Deployment
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+**Purpose:** Creates the Kubernetes Deployment using the configuration specified in `deployment.yaml`.
+
+**Expected output:**
+
+```text
+deployment.apps/web-app-deployment created
+```
+
+### Command 2: Apply Service
+
+```bash
+kubectl apply -f service.yaml
+```
+
+**Purpose:** Creates a Kubernetes Service to expose the application and route traffic to the Pods.
+
+**Expected output:**
+
+```text
+service/web-app-service created
+```
+
+### Command 3: Check Pods
+
+```bash
+kubectl get pods
+```
+
+**Purpose:** Displays the Pods running in the Kubernetes cluster along with their status.
+
+**Expected output:**
+
+```text
+NAME                                  READY   STATUS
+web-app-deployment-xxxxxxxxxx         1/1     Running
+web-app-deployment-yyyyyyyyyy         1/1     Running
+```
+
+### Command 4: Describe the Service
+
+```bash
+kubectl describe service web-app-service
+```
+
+**Purpose:** Displays detailed information about the Service, including its selector, ports, and endpoints.
+
+**Important:** Endpoints represent the Pods to which the Service can forward traffic.
+
+### Command 5: Load Balancing Demonstration
+
+Run:
+
+```bash
+kubectl run test-client --image=curlimages/curl --restart=Never -it --rm -- /bin/sh
+```
+
+**Purpose:** Creates a temporary client Pod to send HTTP requests to the Kubernetes Service.
+
+Inside the shell, execute:
+
+```sh
+for i in $(seq 1 10); do
+    echo "Request $i"
+    curl http://web-app-service
+done
+```
+
+**Purpose:** Sends 10 HTTP requests to the Service to demonstrate connectivity and request routing to the application Pods.
+
+Exit the shell:
+
+```sh
+exit
+```
+
+## 4. Additional Kubernetes Commands – For Reference
+
+These commands are useful for checking and managing Kubernetes resources. They are not part of the five compulsory execution steps.
+
+| Command                                                    | Purpose                                                             |
+| ---------------------------------------------------------- | ------------------------------------------------------------------- |
+| `kubectl get deployments`                                  | Displays all Deployments and their replica status.                  |
+| `kubectl get services`                                     | Displays all Services in the cluster.                               |
+| `kubectl get pods -o wide`                                 | Displays Pods along with their IP addresses and node details.       |
+| `kubectl get endpoints web-app-service`                    | Displays the Pod IP addresses registered as Service endpoints.      |
+| `kubectl describe deployment web-app-deployment`           | Displays detailed information about a Deployment.                   |
+| `kubectl delete pod <pod-name>`                            | Deletes a particular Pod.                                           |
+| `kubectl delete pods -l app=web-app`                       | Deletes all Pods matching the specified label.                      |
+| `kubectl scale deployment web-app-deployment --replicas=5` | Increases the Deployment to five replicas.                          |
+| `kubectl port-forward service/web-app-service 8080:80`     | Forwards local port 8080 to the Service port 80 for browser access. |
+
+## Result
+
+Successfully deployed a web application using Kubernetes, created a Service, checked the Pods, inspected the Service endpoints, and demonstrated request routing through the Service.

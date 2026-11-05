@@ -1,0 +1,234 @@
+# 1. Configure Git
+git config --global user.name "YourName"
+git config --global user.email "your_email@example.com"
+
+# 2. Verify configuration
+git config --global --list
+
+# 3. Create project directory
+mkdir exp1
+cd exp1
+
+# 4. Initialize Git repository
+git init
+
+# 5. Create a file
+echo Hello DevOps > index.txt
+
+# 6. Check repository status
+git status
+
+# 7. Add files to staging area
+git add .
+
+# 8. Commit changes
+git commit -m "Initial commit"
+
+# 9. View commit history
+git log
+git log --oneline
+
+# 10. Connect to GitHub repository
+git remote add origin https://github.com/username/repository.git
+
+# 11. Rename branch to main
+git branch -M main
+
+# 12. Push code to GitHub
+git push -u origin main
+
+# 13. Check current branch
+git branch
+
+# 14. Clone an existing repository
+git clone https://github.com/username/repository.git
+
+# 15. Fetch remote changes
+git fetch origin
+
+# 16. Reset local branch to match remote
+git reset --hard origin/main
+
+# 17. Create another change
+echo Second commit >> index.txt
+
+# 18. Stage changes
+git add .
+
+# 19. Create second commit
+git commit -m "Second commit"
+
+# 20. View commit history
+git log --oneline
+
+# 21. Demonstrate soft reset
+git reset --soft HEAD~1
+
+# 22. Check staged changes
+git status
+
+# 23. Commit staged changes again
+git commit -m "Third commit"
+
+# 24. Demonstrate hard reset
+git reset --hard HEAD~1
+
+# 25. Remove nested repository from staging (when necessary)
+git rm --cached -f GitLearning
+
+# 26. Delete unnecessary nested clone (PowerShell)
+Remove-Item -Recurse -Force .\GitLearning
+
+# 27. Unstage changes
+git restore --staged index.txt
+
+# 28. Restore working directory
+git restore index.txt
+
+# 29. Check final repository status
+git status
+
+# 30. Verify remote repository
+git remote -v
+
+
+A-1
+
+| No. | Topic / Command                                 | Status |
+| --- | ----------------------------------------------- | ------ |
+| 1   | Git configuration (`git config`)                | ✅      |
+| 2   | Repository initialization (`git init`)          | ✅      |
+| 3   | Checking repository status (`git status`)       | ✅      |
+| 4   | Adding files (`git add`)                        | ✅      |
+| 5   | Committing changes (`git commit`)               | ✅      |
+| 6   | Viewing commit history (`git log`)              | ✅      |
+| 7   | Connecting remote repository (`git remote add`) | ✅      |
+| 8   | Uploading code (`git push`)                     | ✅      |
+| 9   | Downloading repository (`git clone`)            | ✅      |
+| 10  | Soft reset (`git reset --soft`)                 | ✅      |
+| 11  | Hard reset (`git reset --hard`)                 | ✅      |
+
+
+merge conflict
+
+git checkout main
+
+# Modify file manually in VS Code
+
+git add index.txt
+git commit -m "Main branch change"
+
+git checkout -b feature1
+
+# Modify the same file manually in VS Code
+
+git add index.txt
+git commit -m "Feature branch change"
+
+git checkout main
+
+git merge feature1
+
+# Resolve conflict manually in VS Code
+
+git add index.txt
+git commit -m "Merge conflict resolved"
+
+git push origin main
+
+git status
+
+## PROCEDURE: FORKING AND CREATING A PULL REQUEST USING GITHUB
+
+**Step 1: Fork a Repository**
+
+1. Open GitHub.
+2. Open another developer's public repository.
+3. Click the Fork button.
+4. Select your GitHub account.
+5. Click Create Fork.
+
+**Step 2: Clone the Forked Repository**
+
+Copy the HTTPS URL of your forked repository.
+
+```bash
+git clone https://github.com/YourUsername/RepositoryName.git
+cd RepositoryName
+```
+
+**Step 3: Create or Modify a File**
+
+```bash
+echo My contribution > file1.txt
+```
+
+**Step 4: Add Changes to the Staging Area**
+
+```bash
+git add .
+```
+
+**Step 5: Commit Changes**
+
+```bash
+git commit -m "Added new changes"
+```
+
+**Step 6: Push Changes to GitHub**
+
+```bash
+git push origin main
+```
+
+**Step 7: Create a Pull Request**
+
+1. Open your forked repository on GitHub.
+2. Click Contribute → Open Pull Request.
+3. Select the original repository as the Base Repository.
+4. Select your fork as the Head Repository.
+5. Select the required branches (main).
+6. Enter a Pull Request title and description.
+7. Click Create Pull Request.
+
+**Step 8: Pull Latest Changes**
+
+```bash
+git pull origin main
+```
+
+This downloads and integrates the latest changes from the remote main branch into the current local branch.
+
+**Step 9: Verify Repository Status**
+
+```bash
+git status
+```
+
+**RESULT:**
+
+Successfully forked a GitHub repository, cloned it locally, modified the source code, committed and pushed changes, pulled remote updates and created a Pull Request.
+
+cmdkey /delete:git:https://github.com
+
+
+
+
+git init
+git status
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/Abrar0123786/One.git
+git branch -M main
+git push -u origin main
+git checkout -b feature
+git add app.py
+git commit -m "Initial commit for feature"
+git checkout main
+git add .
+git commit -m "Second commit"
+git merge feature
+git status
+git add .
+git commit -m "Conflict resolve"
+git status

@@ -1,0 +1,309 @@
+# EXPERIMENT 3: APPLICATION CONTAINERIZATION USING DOCKER
+
+## 1. AIM
+
+To create Docker images for applications stored in a local repository, run applications using Docker containers, and push the Docker image to Docker Hub.
+
+## 2. SOFTWARE REQUIREMENTS
+
+1. Docker Desktop
+2. Windows PowerShell
+3. Python 3
+4. HTML
+5. Apache HTTP Server (httpd)
+6. Docker Hub account
+
+# PART A: RUNNING A PYTHON APPLICATION USING DOCKER
+
+## Step 1: Install Docker Desktop
+
+1. Download Docker Desktop from https://www.docker.com/products/docker-desktop
+2. Install Docker Desktop.
+3. Start Docker Desktop.
+4. Verify the installation.
+
+Commands:
+
+```powershell
+docker --version
+docker info
+```
+
+## Step 2: Create a Local Application
+
+Create a folder named `exp2` and navigate into it.
+
+```powershell
+mkdir exp2
+cd exp2
+```
+
+Create a Python file:
+
+```powershell
+notepad app.py
+```
+
+Python program:
+
+```python
+print("Hello! Welcome to Docker.")
+print("This application is running inside a Docker container.")
+```
+
+Save the file.
+
+## Step 3: Create a Dockerfile
+
+Create a file named `Dockerfile` without an extension.
+
+```powershell
+New-Item Dockerfile -ItemType File
+notepad Dockerfile
+```
+
+Add the following instructions:
+
+```dockerfile
+FROM python:3.10
+
+WORKDIR /app
+
+COPY . .
+
+CMD ["python", "app.py"]
+```
+
+Explanation:
+
+* `FROM` – Specifies the base image.
+* `WORKDIR` – Sets the working directory inside the container.
+* `COPY` – Copies application files into the container.
+* `CMD` – Specifies the command executed when the container starts.
+
+## Step 4: Build the Docker Image
+
+```powershell
+docker build -t myapp .
+```
+
+This creates a Docker image named `myapp`.
+
+## Step 5: Verify the Docker Image
+
+```powershell
+docker images
+```
+
+This displays all available Docker images.
+
+## Step 6: Run the Docker Container
+
+```powershell
+docker run myapp
+```
+
+Expected output:
+
+```text
+Hello! Welcome to Docker.
+This application is running inside a Docker container.
+```
+
+# PART B: RUNNING AN HTML APPLICATION USING APACHE HTTP SERVER AND DOCKER
+
+## Step 1: Create an HTML Project Folder
+
+```powershell
+mkdir HTML
+cd HTML
+```
+
+## Step 2: Create an HTML File
+
+```powershell
+notepad index.html
+```
+
+HTML program:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Docker Lab</title>
+</head>
+<body>
+    <h1>Hello from Docker!</h1>
+    <p>My first HTML application running inside Docker.</p>
+</body>
+</html>
+```
+
+Save the file.
+
+## Step 3: Create a Dockerfile
+
+```powershell
+New-Item Dockerfile -ItemType File
+notepad Dockerfile
+```
+
+Add the following instructions:
+
+```dockerfile
+FROM httpd:latest
+
+COPY index.html /usr/local/apache2/htdocs/
+```
+
+Explanation:
+
+* `FROM httpd:latest` – Uses the latest Apache HTTP Server image.
+* `COPY` – Copies the HTML file into the Apache web server directory.
+
+## Step 4: Build the Docker Image
+
+```powershell
+docker build -t mywebapp .
+```
+
+This creates a Docker image named `mywebapp`.
+
+## Step 5: Create and Run a Container
+
+```powershell
+docker run -d --name clock1 -p 9090:80 mywebapp
+```
+
+Explanation:
+
+* `docker run` – Creates and starts a container.
+* `-d` – Runs the container in detached mode.
+* `--name clock1` – Assigns a name to the container.
+* `-p 9090:80` – Maps host port 9090 to container port 80.
+* `mywebapp` – Specifies the Docker image.
+
+## Step 6: Verify the Container
+
+```powershell
+docker ps
+```
+
+This displays the running containers.
+
+## Step 7: Access the HTML Application
+
+Open a web browser and enter:
+
+```text
+http://localhost:9090
+```
+
+The HTML webpage will be displayed through Apache HTTP Server.
+
+# PART C: DOCKER IMAGE TAGGING AND PUSHING TO DOCKER HUB
+
+## Step 1: Login to Docker Hub
+
+Create a Docker Hub account and execute:
+
+```powershell
+docker login
+```
+
+Enter your credentials or complete browser authentication.
+
+## Step 2: Tag the Docker Image
+
+Use the following command:
+
+```powershell
+docker tag mywebapp YOUR_USERNAME/mywebapp:v1
+```
+
+Actual command used:
+
+```powershell
+docker tag mywebapp abrar0123786/mywebapp:v1
+```
+
+Explanation:
+
+* `docker tag` – Assigns a new name and tag to an existing image.
+* `abrar0123786` – Docker Hub username.
+* `mywebapp` – Repository name.
+* `v1` – Image version tag.
+
+## Step 3: Verify the Tagged Image
+
+```powershell
+docker images
+```
+
+The image should appear as:
+
+```text
+abrar0123786/mywebapp    v1
+mywebapp                latest
+```
+
+## Step 4: Push the Image to Docker Hub
+
+```powershell
+docker push abrar0123786/mywebapp:v1
+```
+
+This uploads the Docker image to Docker Hub.
+
+Successful output includes:
+
+```text
+v1: digest: sha256:...
+```
+
+## Step 5: Verify the Image on Docker Hub
+
+1. Open https://hub.docker.com/
+2. Login to your account.
+3. Open Repositories.
+4. Select `mywebapp`.
+5. Verify that the `v1` image tag is available.
+
+The repository should be:
+
+```text
+abrar0123786/mywebapp
+```
+
+## Step 6: Pull the Image (Optional Verification)
+
+To download the published image:
+
+```powershell
+docker pull abrar0123786/mywebapp:v1
+```
+
+# IMPORTANT DOCKER COMMANDS
+
+| Command                   | Description                         |
+| ------------------------- | ----------------------------------- |
+| `docker --version`        | Displays Docker version.            |
+| `docker info`             | Displays Docker system information. |
+| `docker build -t myapp .` | Builds a Docker image.              |
+| `docker images`           | Lists Docker images.                |
+| `docker run myapp`        | Runs a container.                   |
+| `docker run -d`           | Runs a container in detached mode.  |
+| `docker ps`               | Lists running containers.           |
+| `docker ps -a`            | Lists all containers.               |
+| `docker tag`              | Tags a Docker image.                |
+| `docker login`            | Logs in to Docker Hub.              |
+| `docker push`             | Pushes an image to Docker Hub.      |
+| `docker pull`             | Downloads an image from Docker Hub. |
+| `docker stop clock1`      | Stops a container.                  |
+| `docker start clock1`     | Starts a stopped container.         |
+| `docker rm clock1`        | Removes a stopped container.        |
+
+# RESULT
+
+Thus, Python and HTML applications were successfully containerized using Docker. Docker images were created, containers were executed, and the HTML application was accessed through Apache HTTP Server using port mapping. The HTML Docker image was successfully tagged and pushed to Docker Hub.
