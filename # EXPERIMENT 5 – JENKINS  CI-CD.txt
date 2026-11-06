@@ -1,0 +1,334 @@
+# EXPERIMENT 5 – JENKINS / CI-CD
+
+## Aim
+
+To implement Continuous Integration using Jenkins by integrating a GitHub repository and triggering builds manually, periodically using Poll SCM, and automatically using GitHub Webhooks.
+
+## Software Requirements
+
+1. Windows operating system
+2. Java JDK 21 or later
+3. Jenkins
+4. Git
+5. GitHub account
+6. ngrok
+
+---
+
+# PART A – INSTALLATION AND CONFIGURATION
+
+## Step 1: Verify Java Installation
+
+Open PowerShell and execute:
+
+```powershell
+java -version
+```
+
+Java version information should be displayed.
+
+Verify Git installation:
+
+```powershell
+git --version
+```
+
+Git version information should be displayed.
+
+## Step 2: Download and Install Jenkins
+
+1. Open the official Jenkins website.
+2. Navigate to the Windows download section.
+3. Download the Jenkins Windows Installer (MSI).
+4. Run the downloaded installer.
+5. Follow the installation wizard.
+6. Select port `8080`.
+7. Complete the installation.
+
+Jenkins will run as a Windows service.
+
+## Step 3: Open Jenkins
+
+Open your browser and visit:
+
+```text
+http://localhost:8080
+```
+
+The Unlock Jenkins page will appear.
+
+Find the initial administrator password at:
+
+```text
+C:\Program Files\Jenkins\secrets\initialAdminPassword
+```
+
+Open the file and copy the password.
+
+1. Paste the password into Jenkins.
+2. Click Continue.
+3. Select Install suggested plugins.
+4. Wait for the plugins to install.
+5. Create your administrator account.
+6. Click Start using Jenkins.
+
+Jenkins is now ready.
+
+## Step 4: Install Required Plugins
+
+Navigate to:
+
+Manage Jenkins → Plugins → Available plugins.
+
+Search for and install:
+
+1. Git plugin
+2. GitHub plugin
+
+Restart Jenkins if requested.
+
+---
+
+# PART B – CREATE A JENKINS JOB
+
+## Step 5: Create a New Job
+
+1. Open Jenkins Dashboard.
+2. Click New Item.
+3. Enter the job name:
+
+```text
+GitHub-CI-Job
+```
+
+4. Select Freestyle project.
+5. Click OK.
+
+## Step 6: Connect GitHub Repository
+
+Inside the job configuration:
+
+1. Navigate to Source Code Management.
+2. Select Git.
+3. Enter your GitHub repository URL.
+
+Example:
+
+```text
+https://github.com/USERNAME/REPOSITORY.git
+```
+
+Replace USERNAME and REPOSITORY with your actual GitHub details.
+
+4. Specify the branch:
+
+```text
+*/main
+```
+
+5. If the repository is private, configure the required GitHub credentials.
+
+## Step 7: Configure Build Steps
+
+Scroll down to Build Steps.
+
+1. Click Add build step.
+2. Select Execute Windows batch command.
+3. Enter:
+
+```bat
+echo Jenkins CI Build Started
+echo Repository cloned successfully
+git --version
+dir
+echo Build Completed Successfully
+```
+
+4. Click Save.
+
+---
+
+# PART C – MANUAL BUILD
+
+## Step 8: Execute the Job Manually
+
+1. Open the Jenkins Dashboard.
+2. Select `GitHub-CI-Job`.
+3. Click Build Now.
+4. Wait for the build to finish.
+5. Open Build History.
+6. Select the latest build.
+7. Click Console Output.
+
+Expected output:
+
+```text
+Jenkins CI Build Started
+Repository cloned successfully
+git version ...
+Build Completed Successfully
+Finished: SUCCESS
+```
+
+The build has been successfully executed.
+
+---
+
+# PART D – AUTOMATIC BUILD USING POLL SCM
+
+## Step 9: Configure Poll SCM
+
+1. Open the `GitHub-CI-Job`.
+2. Click Configure.
+3. Navigate to Build Triggers.
+4. Select Poll SCM.
+
+Enter the schedule:
+
+```text
+* * * * *
+```
+
+This configures Jenkins to check the GitHub repository every minute for changes.
+
+5. Click Save.
+
+## Step 10: Test Poll SCM
+
+1. Open your GitHub repository.
+2. Modify an existing file or create a new file.
+3. Commit and push the changes.
+
+Execute these commands from your local project directory:
+
+```powershell
+git add .
+git commit -m "Testing Jenkins Poll SCM"
+git push origin main
+```
+
+4. Wait for Jenkins to detect the change.
+5. Open Jenkins Build History.
+6. Check Console Output.
+
+Expected result:
+
+A new build should start automatically after Jenkins detects the repository change.
+
+---
+
+# PART E – AUTOMATIC BUILD USING GITHUB WEBHOOK
+
+## Step 11: Install and Configure ngrok
+
+GitHub needs a publicly accessible URL to send webhook events to Jenkins.
+
+Since Jenkins is running locally, ngrok provides a temporary public URL.
+
+Install ngrok using the official Windows installation instructions.
+
+Configure your ngrok authentication token:
+
+```powershell
+ngrok config add-authtoken YOUR_NGROK_AUTHTOKEN
+```
+
+Replace the placeholder with your own token.
+
+## Step 12: Start ngrok Tunnel
+
+Open a new PowerShell terminal and execute:
+
+```powershell
+ngrok http 8080
+```
+
+ngrok will display a forwarding URL similar to:
+
+```text
+Forwarding https://example.ngrok-free.app -> http://localhost:8080
+```
+
+Copy the HTTPS forwarding URL.
+
+Keep this terminal open.
+
+## Step 13: Configure GitHub Webhook Trigger in Jenkins
+
+1. Open Jenkins Dashboard.
+2. Select `GitHub-CI-Job`.
+3. Click Configure.
+4. Navigate to Build Triggers.
+5. Select:
+
+```text
+GitHub hook trigger for GITScm polling
+```
+
+6. Click Save.
+
+## Step 14: Add Webhook in GitHub
+
+1. Open your GitHub repository.
+2. Navigate to Settings.
+3. Select Webhooks.
+4. Click Add webhook.
+
+Enter the following details:
+
+**Payload URL:**
+
+```text
+https://YOUR-NGROK-URL/github-webhook/
+```
+
+Example:
+
+```text
+https://example.ngrok-free.app/github-webhook/
+```
+
+**Content type:**
+
+```text
+application/json
+```
+
+**Which events would you like to trigger this webhook?**
+
+Select:
+
+```text
+Just the push event
+```
+
+Enable Active and click Add webhook.
+
+## Step 15: Test GitHub Webhook
+
+1. Open your local project.
+2. Modify a file.
+3. Commit and push the changes.
+
+Execute:
+
+```powershell
+git add .
+git commit -m "Testing GitHub Webhook"
+git push origin main
+```
+
+4. Open Jenkins Dashboard.
+5. Check Build History.
+6. Open the latest build.
+7. Check Console Output.
+
+Expected result:
+
+Jenkins automatically starts a new build when GitHub sends a push event to the configured webhook.
+
+---
+
+# RESULT
+
+Successfully integrated Jenkins with GitHub and implemented Continuous Integration through manual builds, scheduled builds using Poll SCM, and automatic builds using GitHub Webhooks.
